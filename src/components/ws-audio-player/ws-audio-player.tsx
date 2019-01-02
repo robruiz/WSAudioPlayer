@@ -1,5 +1,6 @@
 import { Component, Prop } from '@stencil/core';
 import { format } from '../../utils/utils';
+import { WaveSurfer } from 'wavesurfer.js/src/wavesurfer.js';
 
 @Component({
   tag: 'ws-audio-player',
@@ -27,6 +28,8 @@ export class WSAudioPlayer {
   }
 
   render() {
+    let ws = WaveSurfer;
+    ws.create({});
     return <div>Hello, World! I'm {this.getText()}</div>;
   }
 }
