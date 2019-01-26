@@ -1,6 +1,5 @@
-import { Component, Prop } from '@stencil/core';
-import { format } from '../../utils/utils';
-import { WaveSurfer } from 'wavesurfer.js/src/wavesurfer.js';
+import { Component, Prop, Method, Element } from '@stencil/core';
+import WaveSurfer from 'wavesurfer.js';
 
 @Component({
   tag: 'ws-audio-player',
@@ -9,27 +8,58 @@ import { WaveSurfer } from 'wavesurfer.js/src/wavesurfer.js';
 })
 export class WSAudioPlayer {
   /**
-   * The first name
+   * The Link To The Audio File
    */
-  @Prop() audio: string;
+    @Prop() audio: string;
 
   /**
-   * The middle name
+   * The waveform color
    */
-  @Prop() color: string;
+    @Prop() color: string;
+
+    /**
+     * The Track Title
+     */
+    @Prop() title: string;
 
   /**
-   * The last name
+   * The height of the waveform
    */
-  @Prop() width: string;
+    @Prop() height: string;
 
-  private getText(): string {
-    return format(this.audio, this.color, this.width);
-  }
+    @Element() el: HTMLElement;
 
-  render() {
-    let ws = WaveSurfer;
-    ws.create({});
-    return <div>Hello, World! I'm {this.getText()}</div>;
-  }
+    public wsPlayer;
+
+    @Method() create(){
+        let ws = WaveSurfer;
+        let container = this.el.shadowRoot.querySelector('#wavesurfer');
+        //console.log([container, this.el]);
+        this.wsPlayer = ws.create({
+            container: container,
+            waveColor: this.color,
+            progressColor: 'purple',
+            height: this.height
+        });
+        this.wsPlayer.load(this.audio);
+    }
+
+    @Method() playpause(){
+        this.wsPlayer.playPause();
+    }
+
+    componentDidLoad() {
+        this.create();
+    }
+
+    render() {
+
+        return <div class="wsap-container">
+            <div class="title"><h3>{this.title}</h3></div>
+            <div class="wsap-left-controls">
+                <button class="playpause" onClick={() => this.playpause()}><img src="assets/play_pause.png" /></button>
+            </div>
+            <div id="wavesurfer"></div>
+            </div>;
+    }
 }

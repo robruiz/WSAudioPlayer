@@ -12,58 +12,68 @@ import '@stencil/core';
 
 export namespace Components {
 
-  interface MyComponent {
+  interface WsAudioPlayer {
     /**
-    * The first name
+    * The Link To The Audio File
     */
-    'first': string;
+    'audio': string;
     /**
-    * The last name
+    * The waveform color
     */
-    'last': string;
+    'color': string;
+    'create': () => void;
     /**
-    * The middle name
+    * The height of the waveform
     */
-    'middle': string;
+    'height': string;
+    'playpause': () => void;
+    /**
+    * The Track Title
+    */
+    'title': string;
   }
-  interface MyComponentAttributes extends StencilHTMLAttributes {
+  interface WsAudioPlayerAttributes extends StencilHTMLAttributes {
     /**
-    * The first name
+    * The Link To The Audio File
     */
-    'first'?: string;
+    'audio'?: string;
     /**
-    * The last name
+    * The waveform color
     */
-    'last'?: string;
+    'color'?: string;
     /**
-    * The middle name
+    * The height of the waveform
     */
-    'middle'?: string;
+    'height'?: string;
+    /**
+    * The Track Title
+    */
+    'title'?: string;
   }
 }
 
 declare global {
   interface StencilElementInterfaces {
-    'MyComponent': Components.MyComponent;
+    'WsAudioPlayer': Components.WsAudioPlayer;
   }
 
   interface StencilIntrinsicElements {
-    'my-component': Components.MyComponentAttributes;
+    'ws-audio-player': Components.WsAudioPlayerAttributes;
   }
 
 
-  interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {}
-  var HTMLMyComponentElement: {
-    prototype: HTMLMyComponentElement;
-    new (): HTMLMyComponentElement;
+  interface HTMLWsAudioPlayerElement extends Components.WsAudioPlayer, HTMLStencilElement {}
+  var HTMLWsAudioPlayerElement: {
+    prototype: HTMLWsAudioPlayerElement;
+    new (): HTMLWsAudioPlayerElement;
   };
 
   interface HTMLElementTagNameMap {
-    'my-component': HTMLMyComponentElement
+    'ws-audio-player': HTMLWsAudioPlayerElement
   }
 
   interface ElementTagNameMap {
-    'my-component': HTMLMyComponentElement;
+    'ws-audio-player': HTMLWsAudioPlayerElement;
   }
 
 

@@ -1,1 +1,26 @@
+.wsap-container {
+    max-width:600px;
+    border:1px solid black;
+    display:flex;
+    flex-wrap:wrap;
+}
+.wsap-container .title {
+    flex:100%;
+}
+.wsap-left-controls {
+    display:inline-block;
+    width:25%;
+    vertical-align:top;
+    flex:1;
+    text-align:center;
+}
+.wsap-left-controls img {
+    width:75px;
+}
+.wsap-container div#wavesurfer {
+    display: inline-block;
+    width: 50%;
+    vertical-align: top;
+    flex:4;
+}
 
