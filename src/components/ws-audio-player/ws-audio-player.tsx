@@ -1,4 +1,4 @@
-import { Component, Prop, Method, Element } from '@stencil/core';
+import { Component, Prop, Method, Element, State, Watch } from '@stencil/core';
 import WaveSurfer from 'wavesurfer.js';
 
 @Component({
@@ -22,6 +22,16 @@ export class WSAudioPlayer {
      */
     @Prop() title: string;
 
+    /**
+     * Whether or not the player is playing
+     */
+    @State() isPlaying: string;
+
+    @Watch('audio')
+    watchHandler(newValue: boolean) {
+        this.wsPlayer.load(newValue);
+    }
+
   /**
    * The height of the waveform
    */
@@ -42,10 +52,13 @@ export class WSAudioPlayer {
             height: this.height
         });
         this.wsPlayer.load(this.audio);
+        this.isPlaying  = this.wsPlayer.isPlaying()
     }
 
     @Method() playpause(){
         this.wsPlayer.playPause();
+        this.isPlaying  = this.wsPlayer.isPlaying();
+        console.log([this.isPlaying, this.wsPlayer.isPlaying()]);
     }
 
     componentDidLoad() {
@@ -57,7 +70,7 @@ export class WSAudioPlayer {
         return <div class="wsap-container">
             <div class="title"><h3>{this.title}</h3></div>
             <div class="wsap-left-controls">
-                <button class="playpause" onClick={() => this.playpause()}><img src="assets/play_pause.png" /></button>
+                <button class="play-pause" onClick={() => this.playpause()}><div class={"symbol " + (this.isPlaying ? ' paused' : 'playing') }></div></button>
             </div>
             <div id="wavesurfer"></div>
             </div>;
