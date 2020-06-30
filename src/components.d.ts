@@ -22,6 +22,7 @@ export namespace Components {
     */
     'color': string;
     'create': () => void;
+    'duration': string;
     /**
     * The height of the waveform
     */
@@ -41,6 +42,7 @@ export namespace Components {
     * The waveform color
     */
     'color'?: string;
+    'duration'?: string;
     /**
     * The height of the waveform
     */
