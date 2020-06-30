@@ -29,6 +29,10 @@ export namespace Components {
     'height': string;
     'playpause': () => void;
     /**
+    * The player theme
+    */
+    'theme': string;
+    /**
     * The Track Title
     */
     'title': string;
@@ -47,6 +51,10 @@ export namespace Components {
     * The height of the waveform
     */
     'height'?: string;
+    /**
+    * The player theme
+    */
+    'theme'?: string;
     /**
     * The Track Title
     */

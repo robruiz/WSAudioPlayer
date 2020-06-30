@@ -1,15 +1,12 @@
 .wsap-container {
     max-width:600px;
     border:1px solid black;
-    /*display:flex;
-    flex-wrap:wrap;*/
+    overflow: hidden;
 }
 .wsap-container .title {
     flex:100%;
 }
 .wsap-left-controls {
-   /* //display:inline-block;
-    width:25%;*/
     vertical-align:top;
     flex:1;
     text-align:center;
@@ -25,8 +22,6 @@ button.play-pause:active {
     width:75px;
 }
 .wsap-container div#wavesurfer {
-   /* display: inline-block;
-    width: 50%;*/
     vertical-align: top;
     flex:4;
 }
@@ -51,7 +46,6 @@ button.play-pause:active {
 }
 .title h3 {
     margin: 0;
-    color:black;
 }
 button.play-pause {
     border-radius: 50%;
@@ -91,4 +85,17 @@ button.play-pause {
 }
 .symbol:hover {
     border-color: transparent transparent transparent #404040;
+}
+
+/* Dark Theme */
+.wsap-container.dark {
+  background:#202020;
+}
+.wsap-container.dark .player-header {
+  border: 1px solid #4f4f4f;
+  color: #f3f3f3;
+  background:#3b3b3b;
+}
+.dark .current-time, .dark .total-time {
+  outline:1px solid #4f4f4f;
 }

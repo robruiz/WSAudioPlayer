@@ -17,6 +17,11 @@ export class WSAudioPlayer {
    */
     @Prop() color: string;
 
+  /**
+   * The player theme
+   */
+    @Prop() theme: string;
+
     /**
      * The Track Title
      */
@@ -44,6 +49,7 @@ export class WSAudioPlayer {
     @Element() el: HTMLElement;
 
     public wsPlayer;
+    public themeSetting;
 
     @Method() create(){
         let ws = WaveSurfer;
@@ -52,9 +58,14 @@ export class WSAudioPlayer {
         this.wsPlayer = ws.create({
             container: container,
             waveColor: this.color,
-            progressColor: 'purple',
+            progressColor: '#666666',
             height: this.height
         });
+        if(!this.theme){
+          this.themeSetting = 'basic';
+        } else {
+          this.themeSetting = this.theme;
+        }
         this.wsPlayer.load(this.audio);
         this.wsPlayer.on('ready', () =>  {
           this.duration = this.formatTime(this.wsPlayer.getDuration());
@@ -107,7 +118,7 @@ export class WSAudioPlayer {
 
     render() {
 
-        return <div class="wsap-container">
+        return <div class={'wsap-container '+this.themeSetting}>
           <div class="player-header">
             <div class="title"><h3>{this.title}</h3></div>
             <div class="current-time">
