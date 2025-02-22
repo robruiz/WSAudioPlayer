@@ -8,7 +8,11 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface WsAudioPlayer {
         "audio": string;
-        "calculateBarWidth": () => Promise<number>;
+        "audioTitle": string;
+        /**
+         * @deprecated use camelCase instead. Support for dash-casing will be removed in Stencil v5.
+         */
+        "audio-title"?: string;
         "color": string;
         "create": () => Promise<void>;
         "duration": string;
@@ -18,7 +22,6 @@ export namespace Components {
         "resolution": number;
         "setLoop": (enable: boolean) => Promise<void>;
         "theme": string;
-        "title": string;
         "toggleLoop": () => Promise<void>;
     }
 }
@@ -36,12 +39,16 @@ declare global {
 declare namespace LocalJSX {
     interface WsAudioPlayer {
         "audio"?: string;
+        "audioTitle"?: string;
+        /**
+         * @deprecated use camelCase instead. Support for dash-casing will be removed in Stencil v5.
+         */
+        "audio-title"?: string;
         "color"?: string;
         "duration"?: string;
         "height"?: string;
         "resolution"?: number;
         "theme"?: string;
-        "title"?: string;
     }
     interface IntrinsicElements {
         "ws-audio-player": WsAudioPlayer;

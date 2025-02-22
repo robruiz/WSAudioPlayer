@@ -1,4 +1,4 @@
-import { Component, Prop, Method, Element, State, Watch } from '@stencil/core';
+import { Component, Prop, Method, Element, State, Watch, h } from '@stencil/core';
 import WaveSurfer from 'wavesurfer.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
 
@@ -19,7 +19,7 @@ export class WSAudioPlayer {
   @Prop() audio: string;
   @Prop() color: string;
   @Prop() theme: string = 'basic';
-  @Prop() title: string;
+  @Prop() audioTitle: string;
   @Prop({ mutable: true }) duration: string;
   @Prop() height: string;
   @Prop() resolution: number = 100;
@@ -37,29 +37,29 @@ export class WSAudioPlayer {
     this.wsPlayer.load(newValue);
   }
 
-  @Method() playpause() {
+  @Method()
+  async playpause(): Promise<void> {
     this.wsPlayer.playPause();
     this.isPlaying = this.wsPlayer.isPlaying();
     this.curTime = this.getCurrentTime();
   }
 
-  @Method() toggleLoop() {
-
+  @Method()
+  async toggleLoop(): Promise<void> {
     if (this.isLooping) {
-      // Disable looping: Remove all regions and stop looping
       this.wsPlayer.regions.clear();
       this.isLooping = false;
       console.log('Looping disabled.');
     } else {
-      // Add the full-track loop region
-      this.enableFullTrackLoop();
+      this.enableFullTrackLoop(); // Already asynchronous, so no need to `await`.
       this.isLooping = true;
       console.log('Looping enabled for the full track.');
       console.log(this.wsPlayer.regions);
     }
   }
 
-  @Method() enableFullTrackLoop() {
+  @Method()
+  async enableFullTrackLoop(): Promise<void> {
     if (!this.wsPlayer || !this.wsPlayer.regions) {
       console.error('Wavesurfer or RegionsPlugin is not initialized.');
       return;
@@ -68,30 +68,24 @@ export class WSAudioPlayer {
     const duration = this.wsPlayer.getDuration();
 
     if (duration > 0) {
-      // Clear any existing regions
       this.wsPlayer.regions.clear();
 
-      // Add a new looping region
       const region = this.wsPlayer.regions.add({
-        start: 0,             // Start of the track
-        end: duration,        // End of the track
-        loop: true,           // Enable looping for this region
-        color: 'rgba(255,0,0,0.5)', // Optional: Highlight the region
-        drag: false,          // No region dragging
-        resize: false,        // No region resizing
+        start: 0,
+        end: duration,
+        loop: true,
+        color: 'rgba(255,0,0,0.5)',
+        drag: false,
+        resize: false,
       });
 
-      // Attach a debug log to track when the region-out event is fired
       region.on('out', () => {
         console.log('Region loop triggered (region-out). Restarting playback...');
         console.log(`Region details - Start: ${region.start}, End: ${region.end}`);
         console.log('Current time:', this.wsPlayer.getCurrentTime());
-
-        // Optionally restart playback manually if the region does not loop automatically
         this.wsPlayer.play(region.start);
       });
 
-      // Start playback
       this.wsPlayer.play(region.start);
       console.log('Full track loop region created and playback started.');
     } else {
@@ -99,7 +93,8 @@ export class WSAudioPlayer {
     }
   }
 
-  @Method() setLoop(enable: boolean) {
+  @Method()
+  async setLoop(enable: boolean): Promise<void> {
     this.wsPlayer.on('finish', () => {
       if (enable) this.wsPlayer.play();
     });
@@ -109,44 +104,43 @@ export class WSAudioPlayer {
     }
   }
 
-  @Method() create() {
-    //const container = this.el.shadowRoot.querySelector('#wavesurfer');
+  @Method()
+  async create(): Promise<void> {
+    const container = this.el.shadowRoot.querySelector('#wavesurfer') as HTMLElement; // Use a type assertion
+
+    if (!container) {
+      console.error('WaveSurfer container element not found!');
+      return;
+    }
+
     this.wsPlayer = WaveSurfer.create({
-      container: '#wavesurfer',
+      container: container, // Now correctly typed as HTMLElement
       plugins: [
         RegionsPlugin.create({
           dragSelection: false,
-        }),
+        } as any),
       ],
       waveColor: this.color,
       progressColor: '#666666',
-      height: this.height,
-      scrollParent: false,
+      height: parseInt(this.height, 10) || 128,
       barWidth: this.calculateBarWidth(),
-      loopSelection: true,
     });
 
     this.wsPlayer.load(this.audio);
 
-    this.wsPlayer.on('ready', () => {
-      this.duration = this.formatTime(this.wsPlayer.getDuration());
-      this.curTime = this.formatTime(this.wsPlayer.getCurrentTime());
-    });
-
-    this.wsPlayer.on('region-created', (region: AudioRegion) => {
-      region.update({ loop: true });
-      this.audioRegions.push(region); // Add the new region to the state
-      this.wsPlayer.play(region.start);
+    return new Promise((resolve) => {
+      this.wsPlayer.on('ready', () => {
+        this.duration = this.formatTime(this.wsPlayer.getDuration());
+        this.curTime = this.formatTime(this.wsPlayer.getCurrentTime());
+        resolve();
+      });
     });
   }
 
-  @Method()
-  calculateBarWidth(): Promise<number> {
-    const barWidth = this.calculateWidth(); // Hypothetical synchronous calculation
-    return Promise.resolve(barWidth); // Wrap the return value in a Promise
+  calculateBarWidth(): number {
+    // Logic to compute barWidth as a number
+    return 4; // Default example value
   }
-
-
 
   componentDidLoad() {
     this.create();
@@ -177,7 +171,7 @@ export class WSAudioPlayer {
       <div class={'wsap-container ' + this.theme}>
         <div class="player-header">
           <div title="Audio Title" class="title">
-            <h3>{this.title}</h3>
+            <h3>{this.audioTitle}</h3>
           </div>
           <button title="toggle loop" class={`loop ${this.isLooping ? 'active' : ''}`} onClick={() => this.toggleLoop()}>
             <div class="loop-symbol">

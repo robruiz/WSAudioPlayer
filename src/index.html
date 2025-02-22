@@ -4,12 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
   <title>Stencil Component Starter</title>
-  <script src="/build/wsaudioplayer.js"></script>
+  <script type="module" src="/build/wsaudioplayer.esm.js"></script>
+  <script nomodule src="/build/wsaudioplayer.js"></script>
 
 </head>
 <body>
 
-  <ws-audio-player audio="assets/oldyazzie.wav" theme="dark" resolution=60 title="Style Creep" color="white" height="100"></ws-audio-player>
+  <ws-audio-player audio="assets/oldyazzie.wav" theme="dark" resolution=60 audio-title="Styles Creep" color="white" height="100"></ws-audio-player>
 
 </body>
 </html>
