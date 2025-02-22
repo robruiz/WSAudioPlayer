@@ -24,13 +24,14 @@ export class WSAudioPlayer {
   @Prop() height: string;
   @Prop() resolution: number = 100;
 
-  @State() isPlaying: string;
+  @State() isPlaying: boolean = false;
   @State() curTime: string;
   @State() isLooping: boolean = false;
   @State() audioRegions: AudioRegion[] = []; // Typed list of regions
 
   @Element() el: HTMLElement;
   public wsPlayer;
+  private timeUpdateListener: () => void;
 
   @Watch('audio')
   watchHandler(newValue: string) {
@@ -46,51 +47,90 @@ export class WSAudioPlayer {
 
   @Method()
   async toggleLoop(): Promise<void> {
+    // Retrieve the RegionsPlugin instance
+    const regionsPlugin = this.wsPlayer.plugins.find(
+      (plugin) => plugin instanceof RegionsPlugin
+    ) as any;
+
+    if (!this.wsPlayer || !regionsPlugin) {
+      console.error('RegionsPlugin is not initialized.');
+      return;
+    }
+
+    // Remove the timeupdate listener
+    if (this.timeUpdateListener) {
+      this.wsPlayer.un('timeupdate', this.timeUpdateListener); // Remove the stored listener
+      this.timeUpdateListener = null; // Reset the reference
+    }
+
+
     if (this.isLooping) {
-      this.wsPlayer.regions.clear();
+      // Disable looping
+      regionsPlugin.clearRegions(); // Remove regions from UI
+      this.wsPlayer.un('timeupdate'); // Unsubscribe the timeupdate loop logic
       this.isLooping = false;
-      console.log('Looping disabled.');
     } else {
-      this.enableFullTrackLoop(); // Already asynchronous, so no need to `await`.
+      // Enable looping
+      await this.enableFullTrackLoop(); // Set up the region and looping
       this.isLooping = true;
-      console.log('Looping enabled for the full track.');
-      console.log(this.wsPlayer.regions);
+      this.isPlaying = true;
     }
   }
 
   @Method()
   async enableFullTrackLoop(): Promise<void> {
-    if (!this.wsPlayer || !this.wsPlayer.regions) {
-      console.error('Wavesurfer or RegionsPlugin is not initialized.');
+    // Fetch the RegionsPlugin instance
+    const regionsPlugin = this.wsPlayer.plugins.find(
+      (plugin) => plugin instanceof RegionsPlugin
+    ) as any;
+
+    if (!this.wsPlayer || !regionsPlugin) {
+      console.error('WaveSurfer or RegionsPlugin is not initialized.');
       return;
     }
 
+    // Ensure the audio is loaded
     const duration = this.wsPlayer.getDuration();
-
-    if (duration > 0) {
-      this.wsPlayer.regions.clear();
-
-      const region = this.wsPlayer.regions.add({
-        start: 0,
-        end: duration,
-        loop: true,
-        color: 'rgba(255,0,0,0.5)',
-        drag: false,
-        resize: false,
-      });
-
-      region.on('out', () => {
-        console.log('Region loop triggered (region-out). Restarting playback...');
-        console.log(`Region details - Start: ${region.start}, End: ${region.end}`);
-        console.log('Current time:', this.wsPlayer.getCurrentTime());
-        this.wsPlayer.play(region.start);
-      });
-
-      this.wsPlayer.play(region.start);
-      console.log('Full track loop region created and playback started.');
-    } else {
-      console.error('Invalid track duration, cannot create loop.');
+    if (!duration || duration <= 0) {
+      console.error('Invalid track duration. Cannot create a loop region.');
+      return;
     }
+
+    // Clear all existing regions
+    regionsPlugin.clearRegions();
+
+    // Add a new region for looping
+    const region = regionsPlugin.addRegion({
+      start: 0,                // Start slightly after the beginning
+      end: duration - 0.1,       // End slightly before the duration
+      loop: true,                // Highlight that it's a loop region
+      color: 'rgba(255,0,0,0.5)' // Visual feedback for region
+    });
+
+    // Set up manual timeupdate-based looping
+    const loopStart = region.start;
+    const loopEnd = region.end;
+
+    // Remove any previous listener before adding a new one
+    if (this.timeUpdateListener) {
+      this.wsPlayer.un('timeupdate', this.timeUpdateListener); // Remove existing listener
+    }
+
+    // Define the timeupdate listener and store it
+    this.timeUpdateListener = () => {
+      const currentTime = this.wsPlayer.getCurrentTime();
+      if (currentTime >= loopEnd) {
+        console.log(
+          `Loop manually triggered. Current time (${currentTime}) exceeded region end (${loopEnd}).`
+        );
+        this.wsPlayer.play(loopStart); // Restart playback from loop start
+      }
+    };
+    this.wsPlayer.on('timeupdate', this.timeUpdateListener); // Attach the listener
+
+
+    // Explicitly start playback
+    this.wsPlayer.play(loopStart);
   }
 
   @Method()
@@ -127,6 +167,14 @@ export class WSAudioPlayer {
     });
 
     this.wsPlayer.load(this.audio);
+
+    // Add the event listener for when playback finishes
+    this.wsPlayer.on('finish', () => {
+      if (!this.isLooping) {
+        this.isPlaying = false; // Update the isPlaying state
+      }
+    });
+
 
     return new Promise((resolve) => {
       this.wsPlayer.on('ready', () => {
