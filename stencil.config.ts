@@ -2,12 +2,12 @@ import { Config } from '@stencil/core';
 
 export const config: Config = {
   namespace: 'wsAudioPlayer',
-  outputTargets:[
-    { type: 'dist' },
-    { type: 'docs' },
+  outputTargets: [
+    { type: 'dist' }, // Keeps the distribution target
+    { type: 'docs-readme' }, // Replaces the deprecated 'docs' with 'docs-readme'
     {
-      type: 'www',
-      serviceWorker: null // disable service workers
+      type: 'www', // Handles www builds
+      serviceWorker: null // Disable service workers
     }
   ]
 };
