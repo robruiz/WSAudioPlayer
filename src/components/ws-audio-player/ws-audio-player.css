@@ -1,3 +1,7 @@
+:root {
+  --ci-primary-color: #ffffff;
+}
+
 .wsap-container {
     max-width:600px;
     border:1px solid black;
@@ -5,6 +9,9 @@
 }
 .wsap-container .title {
     flex:100%;
+}
+.wsap-container.basic {
+  background:white;
 }
 .wsap-left-controls {
     vertical-align:top;
@@ -22,6 +29,8 @@ button.play-pause:active {
     width:75px;
 }
 .wsap-container div#wavesurfer {
+    display: grid;
+    align-items: center;
     vertical-align: top;
     flex:4;
 }
@@ -49,11 +58,17 @@ button.play-pause:active {
 }
 button.play-pause {
     border-radius: 50%;
-    height: 102px;
-    width: 102px;
+    height: auto;
+    width: 100%;
+    aspect-ratio: 1/1;
     position: relative;
     border-style:initial;
     background:#d4d4d4;
+    cursor: pointer;
+    transform: scale(.7);
+}
+.left-control-container{
+  aspect-ratio: 1/1;
 }
 .player-main {
   display:flex;
@@ -72,24 +87,28 @@ button.play-pause {
     height: 74px;
 
     border-color: transparent transparent transparent #202020;
-    transition: 100ms all ease;
+    transition: 100ms all ease-in-out;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
 
     /* play state */
     border-style: solid;
-    border-width: 37px 0 37px 60px;
+    border-width: 50px 0 50px 60px;
 }
 .symbol.paused {
     border-style: double;
     border-width: 0px 0 0px 60px;
 }
-.symbol:hover {
+button.play-pause:hover .symbol {
     border-color: transparent transparent transparent #404040;
+    transform: scale(.5);
+
 }
 
 /* Dark Theme */
 .wsap-container.dark {
   background:#202020;
+  --ci-primary-color: #f3f3f3;
 }
 .wsap-container.dark .player-header {
   border: 1px solid #4f4f4f;
@@ -99,3 +118,30 @@ button.play-pause {
 .dark .current-time, .dark .total-time {
   outline:1px solid #4f4f4f;
 }
+
+.current-time, .total-time {
+  word-break: keep-all;
+}
+
+button.loop {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button.loop .loop-symbol {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  path {
+    fill: #898989;
+  }
+}
+
+button.loop.active .loop-symbol {
+  path {
+    fill: #ffffff;
+  }
+}
+
