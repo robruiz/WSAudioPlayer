@@ -3,6 +3,7 @@
   --wave-color: #ddd; /* Default color for WaveSurfer */
   --progress-color: #555; /* Default progress color */
   --button-color: white;
+  --font-family: Helvetica, Arial, sans-serif;
 }
 
 
@@ -40,12 +41,11 @@ button.play-pause:active {
 }
 .player-header {
   width:100%;
-  margin-bottom:10px;
   display:flex;
   background:#d4d4d4;
   color: black;
   line-height: 40px;
-  font-family: sans-serif;
+  font-family: var(--font-family);
   font-weight: bold;
   border:1px solid black;
 }
@@ -55,7 +55,7 @@ button.play-pause:active {
 }
 .title {
     padding: 0 20px;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: var(--font-family);
 }
 .title h3 {
     margin: 0;
@@ -76,7 +76,6 @@ button.play-pause {
 }
 .player-main {
   display:flex;
-  margin: 10px 0;
 }
 .symbol {
     position: relative;

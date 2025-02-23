@@ -57,12 +57,17 @@ export class WSAudioPlayer {
    */
   private emitAudioPlayingEvent(): void {
     const event = new CustomEvent('wsAudioPlaying', {
-      detail: { source: this.el }, // Optionally include a reference to this component
-      bubbles: true,               // Allow event to bubble up the DOM
-      composed: true,              // Allow event to cross shadow DOM boundaries
+      detail: {
+        source: this.el,        // A reference to the component
+        title: this.audioTitle, // The title of the track being played
+        audio: this.audio       // The src of the track
+      },
+      bubbles: true,   // Allow the event to bubble up the DOM
+      composed: true,  // Allow the event to cross shadow DOM boundaries
     });
     window.dispatchEvent(event);
   }
+
 
   /**
    * Handles the keydown event for spacebar toggle
@@ -290,7 +295,7 @@ export class WSAudioPlayer {
           </div>
         </div>
 
-        <div class="player-main">
+        <div class="player-main" part="play-main">
           <div class="wsap-left-controls">
             <div class="left-control-container">
               <button title="play/pause" class="play-pause" part="play-pause"
