@@ -4,6 +4,9 @@ The **Wavesurfer Audio Player** is a lightweight and standalone custom web compo
 
 This component offers simple playback controls, customizable styles, event-based communication, and the ability to handle audio playback and looping regions. It is fully responsive and works across web applications.
 
+## **Demo**
+Visit https://www.bizzle.dev/wavesurfer-audio-player/ to see a demo
+
 ---
 
 ## **Getting Started**
