@@ -18,6 +18,7 @@ type AudioRegion = {
 export class WSAudioPlayer {
   @Prop() audio: string;
   @Prop() color: string;
+  @Prop() progress: string = '#666666';
   @Prop() theme: string = 'basic';
   @Prop() audioTitle: string;
   @Prop({ mutable: true }) duration: string;
@@ -62,6 +63,26 @@ export class WSAudioPlayer {
     });
     window.dispatchEvent(event);
   }
+
+  /**
+   * Handles the keydown event for spacebar toggle
+   * @param event - KeyboardEvent
+   */
+  public handleKeyDown = (event: KeyboardEvent): void => {
+    // Check if the spacebar (key: ' ') was pressed
+    if (event.key === ' ' || event.code === 'Space') {
+      // Prevent default behavior (e.g., page scrolling)
+      event.preventDefault();
+
+      // Check if the focused element is part of the current component
+      const activeElement = document.activeElement;
+      if (activeElement && (this.el.contains(activeElement) || this.el.shadowRoot.contains(activeElement))) {
+        // Toggle play/pause on spacebar press
+        this.playpause();
+      }
+    }
+  }
+
 
   @Method()
   async toggleLoop(): Promise<void> {
@@ -176,7 +197,7 @@ export class WSAudioPlayer {
         } as any),
       ],
       waveColor: this.color,
-      progressColor: '#666666',
+      progressColor: this.progress,
       height: parseInt(this.height, 10) || 512,
       barWidth: this.calculateBarWidth(),
     });
@@ -226,6 +247,7 @@ export class WSAudioPlayer {
   }
 
   getCurrentTime() {
+    window.addEventListener('keydown', this.handleKeyDown);
     return this.formatTime(this.wsPlayer.getCurrentTime());
   }
 
@@ -248,8 +270,8 @@ export class WSAudioPlayer {
   render() {
     return (
       <div class={'wsap-container ' + this.theme}>
-        <div class="player-header">
-          <div title="Audio Title" class="title">
+        <div class="player-header" part="play-header">
+          <div title="Audio Title" class="title" part="audio-title">
             <h3>{this.audioTitle}</h3>
           </div>
           <button title="toggle loop" class={`loop ${this.isLooping ? 'active' : ''}`} onClick={() => this.toggleLoop()}>
@@ -271,12 +293,13 @@ export class WSAudioPlayer {
         <div class="player-main">
           <div class="wsap-left-controls">
             <div class="left-control-container">
-              <button title="play/pause" class="play-pause" onClick={() => this.playpause()}>
+              <button title="play/pause" class="play-pause" part="play-pause"
+                       onClick={() => this.playpause()}>
                 <div class={'symbol ' + (this.isPlaying ? ' paused' : 'playing')}></div>
               </button>
             </div>
           </div>
-          <div id="wavesurfer"></div>
+          <div id="wavesurfer" part="waveform"></div>
         </div>
       </div>
     );

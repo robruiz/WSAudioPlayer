@@ -19,6 +19,7 @@ export namespace Components {
         "enableFullTrackLoop": () => Promise<void>;
         "height": string;
         "playpause": () => Promise<void>;
+        "progress": string;
         "resolution": number;
         "setLoop": (enable: boolean) => Promise<void>;
         "theme": string;
@@ -47,6 +48,7 @@ declare namespace LocalJSX {
         "color"?: string;
         "duration"?: string;
         "height"?: string;
+        "progress"?: string;
         "resolution"?: number;
         "theme"?: string;
     }

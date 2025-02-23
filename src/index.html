@@ -9,8 +9,18 @@
 
 </head>
 <body>
+  <style>
+    ws-audio-player::part(waveform) {
+      height: 4px;
+      background-color: #1e90ff;
+    }
 
-  <ws-audio-player audio="assets/headinthecloud-melody.wav" theme="dark" resolution=75 audio-title="Head In The Clouds" color="white" height="100"></ws-audio-player>
+    ws-audio-player::part(play-button) {
+      background: orange;
+      font-size: 16px;
+    }
+  </style>
+  <ws-audio-player style="--wave-color: #1e90ff; --button-color: #1e90ff;" audio="assets/headinthecloud-melody.wav" resolution=75 audio-title="Head In The Clouds" color="black" height="100"></ws-audio-player>
   <ws-audio-player audio="assets/oldyazzie.wav" theme="dark" resolution=75 audio-title="Head In The Clouds" color="white" height="100"></ws-audio-player>
 
 </body>

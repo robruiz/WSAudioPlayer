@@ -1,6 +1,10 @@
-:root {
-  --ci-primary-color: #ffffff;
+:host {
+  display: block;
+  --wave-color: #ddd; /* Default color for WaveSurfer */
+  --progress-color: #555; /* Default progress color */
+  --button-color: white;
 }
+
 
 .wsap-container {
     max-width:600px;
@@ -63,7 +67,7 @@ button.play-pause {
     aspect-ratio: 1/1;
     position: relative;
     border-style:initial;
-    background:#d4d4d4;
+    background:var(--button-color);
     cursor: pointer;
     transform: scale(.7);
 }
