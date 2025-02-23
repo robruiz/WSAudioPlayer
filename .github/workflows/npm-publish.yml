@@ -1,36 +1,36 @@
 name: Build and Publish to npm
 
-  on:
-    push:
-      branches:
-        - master
+on:
+  push:
+    branches:
+      - master
 
-  jobs:
-    build-and-publish:
-      runs-on: ubuntu-latest
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
 
-      steps:
-        # 1. Checkout the repository
-        - name: Checkout Repository
-          uses: actions/checkout@v3
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-        # 2. Set up Node.js
-        - name: Set up Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: 18
-            cache: 'npm'
+      # 2. Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
 
-        # 3. Install dependencies
-        - name: Install Dependencies
-          run: npm install
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm install
 
-        # 4. Build the project
-        - name: Build Stencil Component
-          run: npm run build
+      # 4. Build the project
+      - name: Build Stencil Component
+        run: npm run build
 
-        # 5. Publish to npm
-        - name: Publish to npm
-          run: npm publish
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # 5. Publish to npm
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
