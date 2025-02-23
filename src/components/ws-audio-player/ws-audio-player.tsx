@@ -40,9 +40,27 @@ export class WSAudioPlayer {
 
   @Method()
   async playpause(): Promise<void> {
+    // Toggle playback
     this.wsPlayer.playPause();
     this.isPlaying = this.wsPlayer.isPlaying();
     this.curTime = this.getCurrentTime();
+
+    // Emit the custom event when playback starts
+    if (this.isPlaying) {
+      this.emitAudioPlayingEvent();
+    }
+  }
+
+  /**
+   * Emit a global event to notify other components of playback
+   */
+  private emitAudioPlayingEvent(): void {
+    const event = new CustomEvent('wsAudioPlaying', {
+      detail: { source: this.el }, // Optionally include a reference to this component
+      bubbles: true,               // Allow event to bubble up the DOM
+      composed: true,              // Allow event to cross shadow DOM boundaries
+    });
+    window.dispatchEvent(event);
   }
 
   @Method()
@@ -120,9 +138,6 @@ export class WSAudioPlayer {
     this.timeUpdateListener = () => {
       const currentTime = this.wsPlayer.getCurrentTime();
       if (currentTime >= loopEnd) {
-        console.log(
-          `Loop manually triggered. Current time (${currentTime}) exceeded region end (${loopEnd}).`
-        );
         this.wsPlayer.play(loopStart); // Restart playback from loop start
       }
     };
@@ -162,11 +177,16 @@ export class WSAudioPlayer {
       ],
       waveColor: this.color,
       progressColor: '#666666',
-      height: parseInt(this.height, 10) || 128,
+      height: parseInt(this.height, 10) || 512,
       barWidth: this.calculateBarWidth(),
     });
 
     this.wsPlayer.load(this.audio);
+
+    this.wsPlayer.on('audioprocess', (currentTime: number) => {
+        this.curTime = this.formatTime(currentTime);
+    });
+
 
     // Add the event listener for when playback finishes
     this.wsPlayer.on('finish', () => {
@@ -175,6 +195,16 @@ export class WSAudioPlayer {
       }
     });
 
+    // Add a listener for global playback events
+    window.addEventListener('wsAudioPlaying', (event: CustomEvent) => {
+      if (event.detail.source !== this.el) {
+        // If this is not the source component, pause playback
+        if (this.isPlaying) {
+          this.wsPlayer.pause();
+          this.isPlaying = false; // Update the state
+        }
+      }
+    });
 
     return new Promise((resolve) => {
       this.wsPlayer.on('ready', () => {
@@ -186,8 +216,9 @@ export class WSAudioPlayer {
   }
 
   calculateBarWidth(): number {
-    // Logic to compute barWidth as a number
-    return 4; // Default example value
+    const maxBarWidth = 10; // Maximum bar width at resolution = 0
+    const normalizedResolution = Math.min(Math.max(this.resolution, 0), 100); // Clamp resolution between 0 and 100
+    return maxBarWidth * (1 - normalizedResolution / 100); // Linearly scale widthefault example value
   }
 
   componentDidLoad() {
