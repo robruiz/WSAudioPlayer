@@ -147,4 +147,18 @@ button.loop.active .loop-symbol {
     fill: #ffffff;
   }
 }
+@media (width < 600px) {
+  .title, .current-time, .total-time {
+    font-size: .8em;
+  }
+  .wsap-left-controls {
+    align-content: center;
+  }
+  .symbol {
+    border-width: 35px 0 35px 60px;
+  }
+  .wsap-container div#wavesurfer {
+    margin: 10px 0;
+  }
+}
 
