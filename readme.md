@@ -4,6 +4,8 @@ The **Wavesurfer Audio Player** is a lightweight and standalone custom web compo
 
 This component offers simple playback controls, customizable styles, event-based communication, and the ability to handle audio playback and looping regions. It is fully responsive and works across web applications.
 
+
+
 ## **Demo**
 Visit https://www.bizzle.dev/wavesurfer-audio-player/ to see a demo
 
@@ -21,9 +23,18 @@ For seamless integration, add these script tags to your HTML's `<head>`:
 <script nomodule src="/build/wsaudioplayer.js"></script>
 ```
 
+### **CDN Scripts**
+Modern script (esmodule): https://unpkg.com/wsaudioplayer@0.0.2/dist/wsaudioplayer/wsaudioplayer.esm.js
+Legacy browsers (cjs): https://unpkg.com/wsaudioplayer@0.0.2/dist/cjs/wsaudioplayer.cjs.js
+
 If you are targeting only modern browsers, you may include the ES module version only:
 ```html
 <script type="module" src="/build/wsaudioplayer.esm.js"></script>
+```
+or CDN link
+
+```html
+<script type="module" src="https://unpkg.com/wsaudioplayer@0.0.2/dist/wsaudioplayer/wsaudioplayer.esm.js"></script>
 ```
 
 ---
